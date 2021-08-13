@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="800"></canvas>
+
+<script>
+function draw() {
+  const canvas = document.getElementById('canvas')
+
+  const ctx = canvas.getContext('2d')
+
+  function Rect(x, y, width, height, color) {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.color = color
+  }
+
+  Rect.prototype.draw = function () {
+    ctx.beginPath()
+    ctx.fillStyle = this.color
+    ctx.fillRect(this.x, this.y, this.width, this.height)
+    ctx.strokeRect(this.x, this.y, this.width, this.height)
+  }
+
+  function Snake(length = 0) {
+    this.length = length
+
+    this.head = new Rect(canvas.width / 2, canvas.height / 2, 40, 40, 'red')
+
+    this.body = []
+
+    let x = this.head.x - 40
+    let y = this.head.y
+
+    for ( let i = 0; i < this.length; i++ ) {
+      
+    }
+  }
+}
+</script>
+</body>
+</html>

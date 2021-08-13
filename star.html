@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #canvas {
+      background: no-repeat url(https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F0128ac5d2a0338a80120b5ab29051f.jpg%402o.jpg&refer=http%3A%2F%2Fimg.zcool.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1631414302&t=d72cdb1449a9078f6986ec25c0c6c439);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+<script>
+const canvas = document.getElementById('canvas')
+
+const ctx = canvas.getContext('2d')
+
+// 获取当前视图的宽度和高度
+let aw = document.documentElement.clientWidth || document.body.clientWidth
+let ah = document.documentElement.clientHeight || document.body.clientHeight
+// 赋值给canvas
+canvas.width = aw
+canvas.height = ah
+
+// 屏幕变动时也要监听实时宽高
+window.onresize = function () {
+    aw = document.documentElement.clientWidth || document.body.clientWidth
+    ah = document.documentElement.clientHeight || document.body.clientHeight
+    // 赋值给canvas
+    canvas.width = aw
+    canvas.height = ah
+
+    ctx.fillStyle = 'white'
+    ctx.strokeStyle = 'white'
+}
+
+// 本游戏无论是实心，还是线条，色调都是白色
+ctx.fillStyle = 'white'
+ctx.strokeStyle = 'white'
+
+function Star(x, y, r) {
+    // x，y是坐标，r是半径
+    this.x = x
+    this.y = y
+    this.r = r
+    // speed参数，在  -3 ~ 3 之间取值
+    this.speedX = (Math.random() * 3) * Math.pow(-1, Math.round(Math.random()))
+    this.speedY = (Math.random() * 3) * Math.pow(-1, Math.round(Math.random()))
+}
+
+Star.prototype.draw = function () {
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.closePath()
+}
+
+Star.prototype.move = function () {
+    this.x -= this.speedX
+    this.y -= this.speedY
+    // 碰到边界时，反弹，只需要把speed取反就行
+    if (this.x < 0 || this.x > aw) this.speedX *= -1
+    if (this.y < 0 || this.y > ah) this.speedY *= -1
+}
+
+// 随机在canvas范围内找一个坐标画星星
+const stars = []
+for (let i = 0; i < 100; i++) {
+  stars.push(new Star(Math.random() * aw, Math.random() * ah, 3))
+}
+
+// 连线
+function drawLine(starX, starY, endX, endY) {
+  ctx.beginPath()
+  ctx.moveTo(starX, starY)
+  ctx.lineTo(endX, endY)
+  ctx.stroke()
+  ctx.closePath()
+}
+
+const mouseStar = new Star(0, 0, 3)
+
+canvas.onmousemove = function(e) {
+  mouseStar.x = e.clientX
+  mouseStar.y = e.clientY
+}
+
+window.onclick = function (e) {
+    for (let i = 0; i < 5; i++) {
+        stars.push(new Star(e.clientX, e.clientY, 3))
+    }
+}
+
+// 星星的移动
+setInterval(() => {
+    ctx.clearRect(0, 0, aw, ah)
+    // 
+    mouseStar.draw()
+    //
+    stars.forEach(star => {
+      star.move()
+      star.draw()
+    })
+    stars.forEach((star, idx) => {
+      for (let i = idx+1; i < stars.length; i++) {
+        if (Math.abs(star.x - stars[i].x) < 50 && Math.abs(star.y - stars[i].y) < 50) {
+          drawLine(star.x, star.y, stars[i].x, stars[i].y)
+        }
+      }
+      
+      //
+      if (Math.abs(mouseStar.x - star.x) < 50 && Math.abs(mouseStar.y - star.y) < 50) {
+        drawLine(mouseStar.x, mouseStar.y, star.x, star.y)
+      }
+    })
+}, 50)
+
+
+</script>
+</body>
+</html>
